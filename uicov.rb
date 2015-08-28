@@ -3,12 +3,6 @@ require 'yaml'
 
 puts "START"
 
-#PATTERN_FILE = ARGV[0]
-#INPUT_LOG = ARGV[1]
-PATTERN_FILE = $0
-MODEL_FILE = nil
-INPUT_LOG = 'logPM.txt'
-
 ###########################
 #
 # M E T H O D S
@@ -93,62 +87,74 @@ class CoverageData
   end
 end
 
-CD = CoverageData.new
+class UICoverage
+  class Opts
+    Patterns = {
+      :current_screen => nil,
+      :transition => nil,
+    }
 
-NEW_SCREEN_IS_SET_PATTERN = /1\s+<==\s+([^ ]+)\s+is set as current screen/
-TRANSITION_IS_DONE_PATTERN = /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
+    Files = {
+      :log => nil
+    }
+  end
 
-class UICov
-  class << self
-    def init
-      if PATTERN_FILE.nil? or !File.exists?(PATTERN_FILE)
-        usage "Patterns file is not provided or it's absent by path: '#{PATTERN_FILE}'"
-      end
+  def cov_data
+    @cd ||= CoverageData.new
+  end
 
-      if INPUT_LOG.nil? or !File.exists?(INPUT_LOG)
-        usage "Input log file is not provided or it's absent by path: '#{INPUT_LOG}'"
-      end
-
-      d "Using pattern file: #{PATTERN_FILE}"
-      d "Unsing model file: #{MODEL_FILE}"
-      d "Parsing log file: #{INPUT_LOG}"
+  def init(opts={})
+#      if PATTERN_FILE.nil? or !File.exists?(PATTERN_FILE)
+#        usage "Patterns file is not provided or it's absent by path: '#{PATTERN_FILE}'"
+#      end
+    input_log = (Opts::Files[:log] = opts[:log])
+    if input_log.nil? or !File.exists?(input_log)
+      usage "input log file is not provided or it's absent by path: '#{input_log}'"
     end
 
-    def parse_model
-      #TODO: emulation of model reading
-      #TODO: can work without model but must be a warning
-      %w[HomeScreen CheckoutScreen OneMoreScreen].each do |name|
-        CD.add_screen name
-      end
-      [%w[HomeScreen CheckoutScreen checkout], %w[CheckoutScreen OneMoreScreen one_more],
-       %w[OneMoreScreen CheckoutScreen checkout], %w[HomeScreen OneMoreScreen more]].each do |from, to, name|
-        CD.add_transition from, to, name
+    Opts::Patterns.keys.each {|key| Opts::Patterns[key] = opts[key]}
+
+    #d "Using pattern file: #{PATTERN_FILE}"
+    #d "Unsing model file: #{MODEL_FILE}"
+    d "Parsing log file: #{Opts::Files[:log]}"
+  end
+
+  def parse_model
+    #TODO: emulation of model reading
+    #TODO: can work without model but must be a warning
+#    %w[HomeScreen CheckoutScreen OneMoreScreen].each do |name|
+#      cov_data.add_screen name
+#    end
+#    [%w[HomeScreen CheckoutScreen checkout], %w[CheckoutScreen OneMoreScreen one_more],
+#     %w[OneMoreScreen CheckoutScreen checkout], %w[HomeScreen OneMoreScreen more]].each do |from, to, name|
+#      cov_data.add_transition from, to, name
+#    end
+  end
+
+  def parse_log
+    File.open(Opts::Files[:log]).each do |line|
+      case line
+      when Opts::Patterns[:current_screen]
+        name = $~[1]
+        cov_data.hit_screen name
+      when Opts::Patterns[:current_screen]
+        from, to, name = $~[2], $~[3], $~[1]
+        cov_data.hit_transition from, to, name
+      else
+        #d line
       end
     end
+  end
 
-    def parse_log
-      File.open(INPUT_LOG).each do |line|
-        case line
-        when NEW_SCREEN_IS_SET_PATTERN
-          name = $~[1]
-          CD.hit_screen name
-        when TRANSITION_IS_DONE_PATTERN
-          from, to, name = $~[2], $~[3], $~[1]
-          CD.hit_transition from, to, name
-        else
-      #    d "--"
-        end
-      end
-    end
+  def gather_coverage(opts={})
+    init opts
+    parse_model
+    parse_log
+    return cov_data
+  end
+end # of UICoverage class
 
-    def gather
-      init
-      parse_model
-      parse_log
-    end
-
-  end # of class << self
-end # of class
+UICov = UICoverage.new
 
 ###########################
 #
@@ -157,6 +163,13 @@ end # of class
 ###########################
 
 if __FILE__ == $0
+  opts = {
+    :log => 'logPM.txt',
+    :current_screen => /\s+<==\s+([^ ]+)\s+is set as current screen/,
+    :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
+  }
+  #pp UICov.gather_coverage(opts).screens
+
   require_relative 'tests/test_uicov.rb'
 end
 
