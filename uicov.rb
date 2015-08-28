@@ -92,6 +92,9 @@ class UICoverage
     Patterns = {
       :current_screen => nil,
       :transition => nil,
+      :transition_from => 2,
+      :transition_to => 3,
+      :transition_name => 1,
     }
 
     Files = {
@@ -112,7 +115,7 @@ class UICoverage
       usage "input log file is not provided or it's absent by path: '#{input_log}'"
     end
 
-    Opts::Patterns.keys.each {|key| Opts::Patterns[key] = opts[key]}
+    Opts::Patterns.keys.each {|key| Opts::Patterns[key] = opts[key] unless opts[key].nil?}
 
     #d "Using pattern file: #{PATTERN_FILE}"
     #d "Unsing model file: #{MODEL_FILE}"
@@ -132,13 +135,14 @@ class UICoverage
   end
 
   def parse_log
+    transition_indexes = %w[from to name].map{|e| Opts::Patterns["transition_#{e}".to_sym]}
     File.open(Opts::Files[:log]).each do |line|
       case line
       when Opts::Patterns[:current_screen]
         name = $~[1] # $~ - is MatchData of the latest regexp match
         cov_data.hit_screen name
-      when Opts::Patterns[:current_screen]
-        from, to, name = $~[2], $~[3], $~[1]
+      when Opts::Patterns[:transition]
+        from, to, name = transition_indexes.map{|i| $~[i]} 
         cov_data.hit_transition from, to, name
       else
         #d line
@@ -168,7 +172,7 @@ if __FILE__ == $0
     :current_screen => /\s+<==\s+([^ ]+)\s+is set as current screen/,
     :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
   }
-  #pp UICov.gather_coverage(opts).screens
+  #pp UICov.gather_coverage(opts)
 
   require_relative 'tests/test_uicov.rb'
 end

@@ -2,16 +2,23 @@
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set FirstScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Transition first_to_second from FirstScreen to SecondScreen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set SecondScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Transition second_to_third from SecondScreen to ThirdScreen
+[2015-08-27T13:31:27] DEBUG: Transition second_to_third from SecondScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Transition first_to_third from FirstScreen to ThirdScreen
+[2015-08-27T13:31:27] DEBUG: Transition first_to_third_again from FirstScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Set SecondScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Transition first_to_third from FirstScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Transition first_to_third from FirstScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 
