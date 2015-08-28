@@ -6,8 +6,12 @@
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set SecondScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Set SecondScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 

@@ -8,37 +8,39 @@ class PropsTests < Test::Unit::TestCase
   CURRENT_SCREEN_PATTERN = /Set ([^ ]+) as current screen/
 
   def setup
+    @missed_screen_names = %w[MissedOneScreen MissedTwoScreen]
     @screen_names = %w[FirstScreen SecondScreen ThirdScreen SecondScreen] # Second screen given twice
     @uniq_screen_names = @screen_names.map(&:to_sym).uniq
     @cd = CoverageData.new
     @uicov = UICoverage.new
   end
 
-  must "coverage data is empty by default" do
+  must 'have empty coverage data by default' do
     assert_equal Hash.new, @cd.screens
   end
 
-  must "screens are added to template only once" do
+  must 'add screens to template only once' do
     @screen_names.each {|name| @cd.add_screen name}
     assert_equal @uniq_screen_names, @cd.screens.keys
   end
 
-  must "screens added to template have 0 hits" do
+  must 'add screens to template with 0 hits' do
     @screen_names.each {|name| @cd.add_screen name}
     assert_equal @uniq_screen_names.map{0}, @cd.screens.values.map{|e| e.hits}
   end
 
-  must "screens added to template are not missed" do
+  must 'must add screens to template as not missed' do
     @screen_names.each {|name| @cd.add_screen name}
     assert_equal @uniq_screen_names.map{false}, @cd.screens.values.map{|e| e.missed}
   end
 
-  must "screens from log has not 0 hits" do
+  must 'add hits while gathering coverage' do
     cd = @uicov.gather_coverage(
       :log => COVERAGE_LOG1_FILENAME,
       :current_screen => CURRENT_SCREEN_PATTERN
     )
-    assert_equal @uniq_screen_names.map{1}, cd.screens.values.map{|e| e.hits}
+    expected_hits = @uniq_screen_names.inject([]) {|a, _| last = a.empty? ? 0 : a[-1]; a << last + 1}
+    assert_equal expected_hits, cd.screens.values.map{|e| e.hits}
   end
 end
 

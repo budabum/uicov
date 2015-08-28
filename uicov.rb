@@ -135,7 +135,7 @@ class UICoverage
     File.open(Opts::Files[:log]).each do |line|
       case line
       when Opts::Patterns[:current_screen]
-        name = $~[1]
+        name = $~[1] # $~ - is MatchData of the latest regexp match
         cov_data.hit_screen name
       when Opts::Patterns[:current_screen]
         from, to, name = $~[2], $~[3], $~[1]
