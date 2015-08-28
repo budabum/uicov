@@ -95,16 +95,60 @@ end
 
 CD = CoverageData.new
 
-def parse_model
-  #TODO: emulation of model reading
-  %w[HomeScreen CheckoutScreen OneMoreScreen].each do |name|
-    CD.add_screen name
-  end
-  [%w[HomeScreen CheckoutScreen checkout], %w[CheckoutScreen OneMoreScreen one_more],
-   %w[OneMoreScreen CheckoutScreen checkout], %w[HomeScreen OneMoreScreen more]].each do |from, to, name|
-    CD.add_transition from, to, name
-  end
-end
+NEW_SCREEN_IS_SET_PATTERN = /1\s+<==\s+([^ ]+)\s+is set as current screen/
+TRANSITION_IS_DONE_PATTERN = /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
+
+class UICov
+  class << self
+    def init
+      if PATTERN_FILE.nil? or !File.exists?(PATTERN_FILE)
+        usage "Patterns file is not provided or it's absent by path: '#{PATTERN_FILE}'"
+      end
+
+      if INPUT_LOG.nil? or !File.exists?(INPUT_LOG)
+        usage "Input log file is not provided or it's absent by path: '#{INPUT_LOG}'"
+      end
+
+      d "Using pattern file: #{PATTERN_FILE}"
+      d "Unsing model file: #{MODEL_FILE}"
+      d "Parsing log file: #{INPUT_LOG}"
+    end
+
+    def parse_model
+      #TODO: emulation of model reading
+      #TODO: can work without model but must be a warning
+      %w[HomeScreen CheckoutScreen OneMoreScreen].each do |name|
+        CD.add_screen name
+      end
+      [%w[HomeScreen CheckoutScreen checkout], %w[CheckoutScreen OneMoreScreen one_more],
+       %w[OneMoreScreen CheckoutScreen checkout], %w[HomeScreen OneMoreScreen more]].each do |from, to, name|
+        CD.add_transition from, to, name
+      end
+    end
+
+    def parse_log
+      File.open(INPUT_LOG).each do |line|
+        case line
+        when NEW_SCREEN_IS_SET_PATTERN
+          name = $~[1]
+          CD.hit_screen name
+        when TRANSITION_IS_DONE_PATTERN
+          from, to, name = $~[2], $~[3], $~[1]
+          CD.hit_transition from, to, name
+        else
+      #    d "--"
+        end
+      end
+    end
+
+    def gather
+      init
+      parse_model
+      parse_log
+    end
+
+  end # of class << self
+end # of class
 
 ###########################
 #
@@ -112,39 +156,9 @@ end
 #
 ###########################
 
-if PATTERN_FILE.nil? or !File.exists?(PATTERN_FILE)
-  usage "Patterns file is not provided or it's absent by path: '#{PATTERN_FILE}'"
+if __FILE__ == $0
+  require_relative 'tests/test_uicov.rb'
 end
-
-if INPUT_LOG.nil? or !File.exists?(INPUT_LOG)
-  usage "Input log file is not provided or it's absent by path: '#{INPUT_LOG}'"
-end
-
-d "Using pattern file: #{PATTERN_FILE}"
-d "Unsing model file: #{MODEL_FILE}"
-d "Parsing log file: #{INPUT_LOG}"
-
-NEW_SCREEN_IS_SET_PATTERN = /1\s+<==\s+([^ ]+)\s+is set as current screen/
-TRANSITION_IS_DONE_PATTERN = /Transition '([^ ]+)'.*kind '(?:Tran|RegularAction).*from '([^ ]+)'.*to '([^ ]+)'/
-#TRANSITION_IS_DONE_PATTERN = /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
-
-parse_model #note that without the model only covered data is added but there is no info bout uncovered data
-
-File.open(INPUT_LOG).each do |line|
-  case line
-  when NEW_SCREEN_IS_SET_PATTERN
-    name = $~[1]
-    CD.hit_screen name
-  when TRANSITION_IS_DONE_PATTERN
-    from, to, name = $~[2], $~[3], $~[1]
-    CD.hit_transition from, to, name
-  else
-#    d "--"
-  end
-end
-
-#pp CD.transitions
-puts CD.to_yaml
 
 puts "FINISH"
 
