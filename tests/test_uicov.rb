@@ -1,7 +1,7 @@
 require_relative 'unittest_addons'
 
 puts "START TESTS"
-DEBUG = false
+#DEBUG = false
 
 class PropsTests < Test::Unit::TestCase
   COVERAGE_LOG1_FILENAME = "#{File.dirname(__FILE__)}/test_log1.txt"

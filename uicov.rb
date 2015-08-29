@@ -25,6 +25,26 @@ end
 # C L A S S E S
 #
 ###########################
+class Opts
+  Patterns = {
+    :current_screen => nil,
+    :transition => nil,
+    :transition_from => 2,
+    :transition_to => 3,
+    :transition_name => 1,
+  }
+
+  Files = {
+    :log => nil
+  }
+  
+  Puml = {
+    :add_legend => true,
+    :missed_class_stereotype => 'Missed',
+    :covered_class_stereotype => 'Covered',
+  }
+end
+
 class CoverageInfo
   attr_reader :hits
 
@@ -35,6 +55,10 @@ class CoverageInfo
   
   def missed?
     @missed
+  end
+  
+  def covered?
+    0 < hits
   end
 
   def hit
@@ -89,36 +113,36 @@ class CoverageData
   end
 
   def to_puml(file_name=nil)
-    str_puml '@startuml', 2
-    str_puml SKIN_PARAMS
-    str_puml LEGEND if UICoverage::Opts::Cfg[:add_legend]
+    str_puml '@startuml'
+    str_puml SKIN_PARAMS, 0
+    str_puml LEGEND if Opts::Puml[:add_legend]
+    
+    screens.each_pair do |screen_name, screen_info|
+      stereotype = ''
+      stereotype = "<<#{Opts::Puml[:covered_class_stereotype]}>>" if screen_info.covered?
+      stereotype = "<<#{Opts::Puml[:missed_class_stereotype]}>>" if screen_info.missed?
+      str_puml "state #{screen_name}#{stereotype}"
+      mm = transitions.map{|pair| pair if pair[0][0] == screen_name}.compact.each do |transition, transition_info|
+	#str_puml transition
+	str_puml "#{transition[0]} --> #{transition[1]} : #{transition[2]}"
+	#str_puml "#{transition}"
+      end
+      
+      str_puml ''
+    end
+    
     str_puml '@enduml'
-    unless file_name.nil?
+
+    if file_name.nil?
+      return str_puml
+    else
+      d "Storing results in file #{file_name}"
       File.open(file_name, 'w') {|f| f.write str_puml}
     end
-    return str_puml
   end
 end
 
 class UICoverage
-  class Opts
-    Patterns = {
-      :current_screen => nil,
-      :transition => nil,
-      :transition_from => 2,
-      :transition_to => 3,
-      :transition_name => 1,
-    }
-
-    Files = {
-      :log => nil
-    }
-    
-    Cfg = {
-      :add_legend => true,
-    }
-  end
-
   def cov_data
     @cd ||= CoverageData.new
   end
