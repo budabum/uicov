@@ -25,12 +25,16 @@ end
 # C L A S S E S
 #
 ###########################
-class ScreenInfo
-  attr_reader :hits, :missed
+class CoverageInfo
+  attr_reader :hits
 
   def initialize(missed = false)
     @hits = 0
     @missed = missed
+  end
+  
+  def missed?
+    @missed
   end
 
   def hit
@@ -39,21 +43,11 @@ class ScreenInfo
   end
 end
 
-class TransitionInfo
-  attr_reader :hits, :missed
+ScreenInfo = Class.new(CoverageInfo)
 
+class TransitionInfo < CoverageInfo
   def self.key(from, to, name)
     [from.to_sym, to.to_sym, name.to_sym]
-  end
-
-  def initialize(missed = false)
-    @hits = 0
-    @missed = missed
-  end
-
-  def hit
-    @hits = hits.succ
-    return self
   end
 end
 
@@ -64,6 +58,14 @@ class CoverageData
 
   def transitions
     @transitions ||= {}
+  end
+  
+  def str_puml(msg=nil, nl=1)
+    @str_puml ||= ""
+    unless msg.nil?
+      @str_puml << "#{msg}" + "\n" * nl
+    end
+    return @str_puml
   end
 
   def add_screen(name)
@@ -85,6 +87,17 @@ class CoverageData
     info = transitions.fetch(key, TransitionInfo.new(true))
     transitions[key] = info.hit
   end
+
+  def to_puml(file_name=nil)
+    str_puml '@startuml', 2
+    str_puml SKIN_PARAMS
+    str_puml LEGEND if UICoverage::Opts::Cfg[:add_legend]
+    str_puml '@enduml'
+    unless file_name.nil?
+      File.open(file_name, 'w') {|f| f.write str_puml}
+    end
+    return str_puml
+  end
 end
 
 class UICoverage
@@ -99,6 +112,10 @@ class UICoverage
 
     Files = {
       :log => nil
+    }
+    
+    Cfg = {
+      :add_legend => true,
     }
   end
 
@@ -160,6 +177,50 @@ end # of UICoverage class
 
 UICov = UICoverage.new
 
+SKIN_PARAMS=%q^
+skinparam state {
+  FontSize 10
+  AttributeFontSize 10
+
+  BackgroundColor #FCFCFC
+  BorderColor #C0C0C0
+  FontColor #808080
+  ArrowColor #C0C0C0
+  AttributeFontColor #808080
+  ArrowFontColor #808080
+
+  BackgroundColor<<Covered>> #CCFFCC
+  BorderColor<<Covered>> #008800
+  FontColor<<Covered>> #004400
+  AttributeFontColor<<Covered>> #004400
+
+  BackgroundColor<<Missed>> #FFEE88
+  BorderColor<<Missed>> #FF8800
+  FontColor<<Missed>> #886622
+  AttributeFontColor<<Missed>> #886622
+}
+^
+
+LEGEND=%q^
+state Legend {
+    state "Uncovered Screen from Model" as UncoveredScreen
+    UncoveredScreen -> CoveredScreen : uncovered_transition {0, 0}
+    state "Covered screen from Model" as CoveredScreen<<Covered>>
+    CoveredScreen -[#orange]-> MissedScreen : <font color=orange><b>UNKNOWN</b></font> {1, 1} - covered transition missed in Model
+    CoveredScreen : <b>covered_action_with_3_calls_from_2_tests</b> {3, 2}
+    CoveredScreen : <font color=orange><b>covered_action_missed_in_model</b></font> {1, 1}
+    state "Screen missed in Model" as MissedScreen<<Missed>>
+    CoveredScreen -[#green]-> CoveredScreen : <font color=green><b>covered_transition_to_self</b></font> {1, 1}
+    MissedScreen : uncovered_action {0, 0}
+    MissedScreen : <b>covered_action_missed_in_model</b> {1, 1}
+    state "Another Covered Screen from Model" as AnotherCoveredScreen<<Covered>>
+    MissedScreen -left[#blue]-> AnotherCoveredScreen : <font color=blue><b>DEEP_LINK</b></font> {1, 1}
+    AnotherCoveredScreen -[#green]-> CoveredScreen : <font color=green><b>covered_transition</b></font> {1, 1}
+    CoveredScreen --> AnotherCoveredScreen : <font color=red>NOT_SET</font> {0, 0} - missed transition name in Model
+    AnotherCoveredScreen : uncovered_action {0 ,0}
+}
+^
+
 ###########################
 #
 # E N T R Y   P O I N T
@@ -172,7 +233,7 @@ if __FILE__ == $0
     :current_screen => /\s+<==\s+([^ ]+)\s+is set as current screen/,
     :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
   }
-  #pp UICov.gather_coverage(opts)
+  puts UICov.gather_coverage(opts).to_puml('log.puml')
 
   require_relative 'tests/test_uicov.rb'
 end

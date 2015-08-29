@@ -50,12 +50,12 @@ class PropsTests < Test::Unit::TestCase
 
   must 'must add screens to template as not missed' do
     @screens.each {|name| @cd.add_screen name}
-    assert_equal @uniq_screens.map{false}, @cd.screens.values.map{|e| e.missed}
+    assert_equal @uniq_screens.map{false}, @cd.screens.values.map{|e| e.missed?}
   end
 
   must 'must add transitions to template as not missed' do
     @transitions.each {|from, to, name| @cd.add_transition from, to, name}
-    assert_equal @uniq_transitions.map{false}, @cd.transitions.values.map{|e| e.missed}
+    assert_equal @uniq_transitions.map{false}, @cd.transitions.values.map{|e| e.missed?}
   end
 
   must 'add hits while gathering coverage' do
