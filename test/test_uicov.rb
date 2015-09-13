@@ -6,8 +6,8 @@ require_relative 'unittest_addons'
 
 module UICov
   class PropsTests < Test::Unit::TestCase
-    COVERAGE_LOG1_FILENAME = "#{TESTS_HOME}/test_log1.txt"
-    MODEL1_FILENAME = "#{TESTS_HOME}/model1.puml"
+    COVERAGE_LOG1_FILENAME = "#{GEM_TESTS_DATA_DIR}/test_log1.txt"
+    MODEL1_FILENAME = "#{GEM_TESTS_DATA_DIR}/model1.puml"
     CURRENT_SCREEN_PATTERN = /Set ([^ ]+) as current screen/
     TRANSITION_PATTERN = /Transition ([^ ]+) from ([^ ]+) to ([^ ]+)/
 
