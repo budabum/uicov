@@ -2,35 +2,14 @@ require 'logger'
 require 'pp'
 require 'yaml'
 
-puts "START IT"
+SCRIPT_HOME = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH.unshift SCRIPT_HOME
 
-class Logger
-  class Formatter
-    MyFormat = "%s, [%s (%s)]: %s\n"
-    def call(severity, time, progname, msg)
-      @datetime_format ||= "%H:%M:%S.%4N"
-      MyFormat % [severity, format_datetime(time), progname, msg2str(msg)]
-    end
-  end
+require 'lib/ruby_patches'
 
-  alias :_add :add
-  
-  def add(severity, message, progname, &blk)
-    progname_orig = self.progname
-    self.progname = get_caller
-    _add(severity, message, progname, &blk)
-    self.progname = progname_orig
-  end
-
-  private
-  def get_caller(idx=2)
-    caller[idx].sub(/.*\//, '')
-  end
-
-  def add_count(severity) ; end # TODO count warnings and errors
-end
 Log = Logger.new STDOUT
 Log.level = Logger::DEBUG
+Log.info "Started at #{Time.now}"
 
 ###########################
 #
@@ -314,10 +293,10 @@ if __FILE__ == $0
     :current_screen => /\s+<==\s+([^ ]+)\s+is set as current screen/,
     :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
   }
-  puts UICov.gather_coverage(opts).to_puml('log.puml')
+#  puts UICov.gather_coverage(opts).to_puml('log.puml')
 
-  require_relative 'tests/test_uicov.rb'
+  require 'tests/test_uicov.rb'
 end
 
-puts "FINISH"
+Log.info "Finished at #{Time.now}\n"
 

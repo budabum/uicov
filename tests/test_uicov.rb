@@ -1,8 +1,5 @@
 require_relative 'unittest_addons'
 
-puts "START TESTS"
-#DEBUG = false
-
 class PropsTests < Test::Unit::TestCase
   COVERAGE_LOG1_FILENAME = "#{File.dirname(__FILE__)}/test_log1.txt"
   MODEL1_FILENAME = "#{File.dirname(__FILE__)}/model1.puml"
@@ -10,6 +7,9 @@ class PropsTests < Test::Unit::TestCase
   TRANSITION_PATTERN = /Transition ([^ ]+) from ([^ ]+) to ([^ ]+)/
 
   def setup
+    @log_level_orig = Log.level
+    Log.level = Logger::FATAL
+
     @missed_screens = %w[MissedOneScreen MissedTwoScreen]
     @screens = %w[FirstScreen SecondScreen ThirdScreen SecondScreen] # Second screen given twice
     @uniq_screens = @screens.map(&:to_sym).uniq
@@ -23,6 +23,10 @@ class PropsTests < Test::Unit::TestCase
     @uniq_transitions = @transitions.map{|e| e.map(&:to_sym)}.uniq
     @cd = CoverageData.new
     @uicov = UICoverage.new
+  end
+
+  def teardown
+    Log.level = @log_level_orig
   end
 
   must 'have empty coverage data by default' do
@@ -92,6 +96,4 @@ class PropsTests < Test::Unit::TestCase
     assert_equal expected_transition_hits, cd.transitions.values.map{|e| e.hits}
   end
 end
-
-puts "FINISH TESTS"
 
