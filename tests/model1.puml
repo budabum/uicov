@@ -1,0 +1,16 @@
+@startuml
+
+state FirstScreen
+
+state SecondScreen
+
+state ThirdScreen
+
+'state CommentedScreen
+
+FirstScreen --> SecondScreen : first_to_second
+
+FirstScreen --> NoExplicitStateKeywordScreen : transition1
+
+@enduml
+

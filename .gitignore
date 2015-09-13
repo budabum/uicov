@@ -2,3 +2,4 @@ log*.txt
 *.log
 log*.puml
 *~
+*.swp
