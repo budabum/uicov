@@ -1,7 +1,36 @@
+require 'logger'
 require 'pp'
 require 'yaml'
 
 puts "START IT"
+
+class Logger
+  class Formatter
+    MyFormat = "%s, [%s (%s)]: %s\n"
+    def call(severity, time, progname, msg)
+      @datetime_format ||= "%H:%M:%S.%4N"
+      MyFormat % [severity, format_datetime(time), progname, msg2str(msg)]
+    end
+  end
+
+  alias :_add :add
+  
+  def add(severity, message, progname, &blk)
+    progname_orig = self.progname
+    self.progname = get_caller
+    _add(severity, message, progname, &blk)
+    self.progname = progname_orig
+  end
+
+  private
+  def get_caller(idx=2)
+    caller[idx].sub(/.*\//, '')
+  end
+
+  def add_count(severity) ; end # TODO count warnings and errors
+end
+Log = Logger.new STDOUT
+Log.level = Logger::DEBUG
 
 ###########################
 #
@@ -13,15 +42,6 @@ def usage(err_msg)
   puts "Usage:\n #{$0} patterns_file log_file\nWhere:\n\tpatterns_file - file with regexp patterns to parse \
 your logs\n\tlog_file - your log file from which to get coverage"
   exit 1
-end
-
-DEBUG = ENV['DEBUG'] != "false" || true
-def d(msg)
-  puts "DEBUG: #{msg}" if DEBUG
-end
-
-def w(msg)
-  puts "WARNING: #{msg}"
 end
 
 ###########################
@@ -143,7 +163,7 @@ class CoverageData
     if file_name.nil?
       return str_puml
     else
-      d "Storing results in file #{file_name}"
+      Log.unknown "Storing results in file #{file_name}"
       File.open(file_name, 'w') {|f| f.write str_puml}
     end
   end
@@ -165,16 +185,16 @@ class UICoverage
 
     model_file = (Opts::Files[:model] = opts[:model])
     if model_file.nil? or !File.exists?(model_file)
-      w "Model file is not provided or it's absent by path: '#{model_file}'"
-      w "You won't be able to see uncovered metrics as well as all hits will be reported
-        not as 'covered' but as 'missed in model'"
+      Log.warn "Model file is not provided or it's absent by path: '#{model_file}'"
+      Log.warn "You won't be able to see uncovered metrics as well as all hits will be" + 
+        "reported not as 'covered' but as 'missed in model'"
     end
 
     Opts::Patterns.keys.each {|key| Opts::Patterns[key] = opts[key] unless opts[key].nil?}
 
     #d "Using pattern file: #{PATTERN_FILE}"
     #d "Unsing model file: #{MODEL_FILE}"
-    d "Parsing log file: #{Opts::Files[:log]}"
+    Log.debug "Parsing log file: #{Opts::Files[:log]}"
     return self
   end
 
@@ -182,7 +202,7 @@ class UICoverage
     model_file = Opts::Files[:model]
     return if model_file.nil?
 
-    d "Loading model file: #{model_file}"
+    Log.debug "Loading model file: #{model_file}"
 
     File.open(model_file).each do |line|
       case line.chomp
@@ -197,7 +217,7 @@ class UICoverage
         cov_data.add_screen from
         cov_data.add_screen to
       else
-        w "Unable to parse model line: #{line}"
+        Log.warn "Unable to parse model line: #{line}"
       end
     end
 
