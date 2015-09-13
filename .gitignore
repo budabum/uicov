@@ -3,3 +3,4 @@ log*.txt
 log*.puml
 *~
 *.swp
+.idea
