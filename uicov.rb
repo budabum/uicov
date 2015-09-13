@@ -20,6 +20,10 @@ def d(msg)
   puts "DEBUG: #{msg}" if DEBUG
 end
 
+def w(msg)
+  puts "WARNING: #{msg}"
+end
+
 ###########################
 #
 # C L A S S E S
@@ -32,10 +36,13 @@ class Opts
     :transition_from => 2,
     :transition_to => 3,
     :transition_name => 1,
+    :model_screen => /^state\s+([^ ]+)$/,
+    :model_transition => /^([^ ]+)\s+([-]+\>)\s+([^ ]+)\s+:\s+([^ ]+)$/,
   }
 
   Files = {
-    :log => nil
+    :log => nil,
+    :model => nil,
   }
   
   Puml = {
@@ -153,7 +160,14 @@ class UICoverage
 #      end
     input_log = (Opts::Files[:log] = opts[:log])
     if input_log.nil? or !File.exists?(input_log)
-      usage "input log file is not provided or it's absent by path: '#{input_log}'"
+      usage "Input log file is not provided or it's absent by path: '#{input_log}'"
+    end
+
+    model_file = (Opts::Files[:model] = opts[:model])
+    if model_file.nil? or !File.exists?(model_file)
+      w "Model file is not provided or it's absent by path: '#{model_file}'"
+      w "You won't be able to see uncovered metrics as well as all hits will be reported
+        not as 'covered' but as 'missed in model'"
     end
 
     Opts::Patterns.keys.each {|key| Opts::Patterns[key] = opts[key] unless opts[key].nil?}
@@ -161,11 +175,32 @@ class UICoverage
     #d "Using pattern file: #{PATTERN_FILE}"
     #d "Unsing model file: #{MODEL_FILE}"
     d "Parsing log file: #{Opts::Files[:log]}"
+    return self
   end
 
   def parse_model
-    #TODO: emulation of model reading
-    #TODO: can work without model but must be a warning
+    model_file = Opts::Files[:model]
+    return if model_file.nil?
+
+    d "Loading model file: #{model_file}"
+
+    File.open(model_file).each do |line|
+      case line.chomp
+      when /^['@]/ # Do nothing
+      when /^\s*$/ # Do nothing
+      when Opts::Patterns[:model_screen]
+        name = $~[1] # $~ - is MatchData of the latest regexp match
+        cov_data.add_screen name
+      when Opts::Patterns[:model_transition]
+        from, to, name = $~[1], $~[3], $~[4]
+        cov_data.add_transition from, to, name
+        cov_data.add_screen from
+        cov_data.add_screen to
+      else
+        w "Unable to parse model line: #{line}"
+      end
+    end
+
 #    %w[HomeScreen CheckoutScreen OneMoreScreen].each do |name|
 #      cov_data.add_screen name
 #    end
@@ -173,6 +208,7 @@ class UICoverage
 #     %w[OneMoreScreen CheckoutScreen checkout], %w[HomeScreen OneMoreScreen more]].each do |from, to, name|
 #      cov_data.add_transition from, to, name
 #    end
+    return self
   end
 
   def parse_log
@@ -254,6 +290,7 @@ state Legend {
 if __FILE__ == $0
   opts = {
     :log => 'logPM.txt',
+    :model => 'tests/model1.puml',
     :current_screen => /\s+<==\s+([^ ]+)\s+is set as current screen/,
     :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
   }

@@ -5,6 +5,7 @@ puts "START TESTS"
 
 class PropsTests < Test::Unit::TestCase
   COVERAGE_LOG1_FILENAME = "#{File.dirname(__FILE__)}/test_log1.txt"
+  MODEL1_FILENAME = "#{File.dirname(__FILE__)}/model1.puml"
   CURRENT_SCREEN_PATTERN = /Set ([^ ]+) as current screen/
   TRANSITION_PATTERN = /Transition ([^ ]+) from ([^ ]+) to ([^ ]+)/
 
@@ -56,6 +57,27 @@ class PropsTests < Test::Unit::TestCase
   must 'must add transitions to template as not missed' do
     @transitions.each {|from, to, name| @cd.add_transition from, to, name}
     assert_equal @uniq_transitions.map{false}, @cd.transitions.values.map{|e| e.missed?}
+  end
+
+  ## Kind of functional tests ###
+
+  must 'read the model correctly' do
+    uic = @uicov.init(
+      :log => COVERAGE_LOG1_FILENAME,
+      :model => MODEL1_FILENAME,
+    )
+    assert_equal Hash.new, uic.cov_data.screens
+    assert_equal Hash.new, uic.cov_data.transitions
+    uic.parse_model
+    expected_screens = [
+      :FirstScreen, :SecondScreen, :ThirdScreen, :NoExplicitStateKeywordScreen
+    ]
+    expected_transitions = [
+      TransitionInfo.key(:FirstScreen, :SecondScreen, :first_to_second),
+      TransitionInfo.key(:FirstScreen, :NoExplicitStateKeywordScreen, :transition1),
+    ]
+    assert_equal expected_screens, uic.cov_data.screens.keys
+    assert_equal expected_transitions, uic.cov_data.transitions.keys
   end
 
   must 'add hits while gathering coverage' do
