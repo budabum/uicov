@@ -3,6 +3,7 @@
 #=======
 
 require_relative 'unittest_addons'
+require_relative '../lib/uicov'
 
 module UICov
   class PropsTests < Test::Unit::TestCase

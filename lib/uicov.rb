@@ -34,6 +34,5 @@ if __FILE__ == $0
       :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
   }
   puts UICov.gather_coverage(opts).to_puml('log.puml')
-
-  require "#{UICov::GEM_TESTS_DIR}/test_uicov.rb"
 end
+

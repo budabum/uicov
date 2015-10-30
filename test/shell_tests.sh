@@ -10,7 +10,7 @@ PASSED_TESTS_COUNT=0
 
 function wrong_test(){
     echo "Usage:
-runtest 'Test Name' 'executale with-or-without args' $optional-expected-exit-code"
+runtest 'Test Name' 'executable with-or-without args' $optional-expected-exit-code"
     return 1
 }
 
@@ -45,34 +45,50 @@ function runtest(){
     echo
 }
 
-runtest "Test default behavior - should pringt help" \
-    'uicov' \
-    ''
+runtest "Test default behavior - should print help" \
+  'uicov' \
+  ''
 
-runtest "Test single log parsing" \
-    'uicov parse log1.log' \
-    ''
+runtest "Test coverage gathering from single log" \
+  'uicov gather log1.log' \
+  ''
 
 runtest "Test multiple logs parsing" \
-    'uicov parse log1.log log2.log log3.log' \
-    ''
+  'uicov gather log1.log log2.log log3.log' \
+  ''
+
+runtest 'Test generating template from single puml' \
+  'uicov template model1.puml' \
+  ''
+
+runtest 'Test generating template from multiple pumls' \
+  'uicov template model1.puml model2.puml model3.puml' \
+  ''
+
+runtest 'Test generating template from model folder' \
+  'uicov template pumls' \
+  ''
 
 runtest "Test merging of two coverage data files" \
-    'uicov merge out1.uicov out2.uicov' \
-    ''
+  'uicov merge out1.uicov out2.uicov' \
+  ''
 
 runtest "Test merging of several coverage data files" \
-    'uicov merge out1.uicov out2.uicov out3.uicov' \
-    ''
+  'uicov merge out1.uicov out2.uicov out3.uicov' \
+  ''
 
 runtest "Test merging requires 2 params at least" \
-    'uicov merge out1.uicov' \
-    '' \
-    2
+  'uicov merge out1.uicov' \
+  '' \
+  2
+
+runtest "Test standard html report" \
+  'uicov report out1.uicov' \
+  ''
 
 runtest "Test puml reporting" \
-    'uicov report --puml test.out.puml out1.uicov' \
-    ''
+  'uicov report --puml test.out.puml out1.uicov' \
+  ''
 
 ### Keep it here - at the end ###
 echo "
@@ -83,3 +99,4 @@ Summary:
  Passed: ${PASSED_TESTS_COUNT}
  Failed: ${FAILED_TESTS_COUNT}
 "
+
