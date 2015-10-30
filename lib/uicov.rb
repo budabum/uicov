@@ -26,6 +26,8 @@ if __FILE__ == $0
       :current_screen => /\s+<==\s+([^ ]+)\s+is set as current screen/,
       :transition => /Transition '([^ ]+)'.*from '([^ ]+)'.*to '([^ ]+)'/
   }
-  puts UICov.gather_coverage(opts).to_puml('log.puml')
+  cov = UICov.gather_coverage(opts)
+  cov.to_puml('log.puml')
+  pp cov
 end
 
