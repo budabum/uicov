@@ -9,6 +9,13 @@ module UICov
 
   require "#{GEM_LIB_DIR}/ruby_patches"
   require "#{GEM_LIB_DIR}/version"
+  
+  require "#{GEM_LIB_DIR}/commands/command"
+  require "#{GEM_LIB_DIR}/commands/gather"
+  require "#{GEM_LIB_DIR}/commands/gentmp"
+  require "#{GEM_LIB_DIR}/commands/merge"
+  require "#{GEM_LIB_DIR}/commands/report"
+  require "#{GEM_LIB_DIR}/main"
 
   require "#{GEM_LIB_DIR}/opts"
   require "#{GEM_LIB_DIR}/coverage_info"

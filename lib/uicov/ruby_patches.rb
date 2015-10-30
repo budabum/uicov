@@ -12,12 +12,18 @@ class Logger
   end
 
   alias :_add :add
+  alias :_fatal :fatal
   
   def add(severity, message, progname, &blk)
     progname_orig = self.progname
     self.progname = get_caller
     _add(severity, message, progname, &blk)
     self.progname = progname_orig
+  end
+
+  def fatal(*args, &blk)
+    _fatal(*args, &blk)
+    exit 1
   end
 
   private
