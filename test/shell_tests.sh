@@ -33,14 +33,15 @@ function runtest(){
 
     test_name=${1:-"wrong_test"}
     cmd=${2:-"wrong_test"}
-    expected_output=${3:-"wrong_test"}
+    expected_output=${3:-""}
     expected_exit_code=${4:-0}
 
-    set -x
-    eval ${cmd}
+    actual_output=`set -x; ${cmd} 2>&1`
     exit_code=$?
-    set +x
-    echo "Exit code: ${exit_code}"
+    echo "Expected exit code: ${expected_exit_code}"
+    echo "Actually exit code: ${exit_code}"
+    echo "Expected output: '${expected_output}'"
+    echo "Actually output: '${actual_output}'"
     $(test ${expected_exit_code} -eq ${exit_code}) && test_passed || test_failed
     echo
 }
