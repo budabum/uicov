@@ -9,10 +9,17 @@ module UICov
     def initialize
       @type = CoverageDataType::UNKNOWN
       @log_files = {}
+      @screens = {}
     end
 
     def set_processing_date(date=Time.now)
       @data_gathered_at = date.strftime('%F %R:%S.%3N')
+    end
+
+    def add_covered_screen(name)
+      scd = (@screens[name] ||= ScreenData.new name)
+      scd.hit
+      return scd
     end
 
     def add_log_file(filename, filedate)

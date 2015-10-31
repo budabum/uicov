@@ -6,14 +6,23 @@
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set SecondScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Action 'select_picture' is done on screen SecondScreen
+[2015-08-27T13:31:27] DEBUG: Check 'image_is_correct' is done on screen SecondScreen
+[2015-08-27T13:31:27] DEBUG: Type text 'Something' in 'InputField1' element
+[2015-08-27T13:31:27] DEBUG: Click on 'Button3' element
 [2015-08-27T13:31:27] DEBUG: Transition second_to_third from SecondScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Transition second_to_third from SecondScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Some useless message
 [2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Set FirstScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Transition first_to_third from FirstScreen to ThirdScreen
+[2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Transition third_to_first from ThirdScreen to FirstScreen
+[2015-08-27T13:31:27] DEBUG: Set FirstScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Transition first_to_third_again from FirstScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Set SecondScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Set FirstScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Transition first_to_third from FirstScreen to ThirdScreen
 [2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
 [2015-08-27T13:31:27] DEBUG: Some useless message

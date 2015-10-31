@@ -15,6 +15,11 @@ module UICov
   
   require "#{GEM_LIB_DIR}/coverage/types"
   require "#{GEM_LIB_DIR}/coverage/data"
+  require "#{GEM_LIB_DIR}/coverage/transition_data"
+  require "#{GEM_LIB_DIR}/coverage/action_data"
+  require "#{GEM_LIB_DIR}/coverage/check_data"
+  require "#{GEM_LIB_DIR}/coverage/element_data"
+  require "#{GEM_LIB_DIR}/coverage/screen_data"
 
   require "#{GEM_LIB_DIR}/opts"
   require "#{GEM_LIB_DIR}/coverage_info"
