@@ -5,8 +5,8 @@
 $default_screen = :DefaultScreen
 $current_screen = /Set ([^ ]+) as current screen/
 $transition = /Transition ([^ ]+) from ([^ ]+) to ([^ ]+)/
-$action = /Action '([^ ]+)' is done on ([^ ]+)/
-$check = /Check '([^ ]+)' is done on ([^ ]+)/
+$action = /Action '([^ ]+)' is done on screen ([^ ]+)/
+$check = /Check '([^ ]+)' is done on screen ([^ ]+)/
 $element = /(?:Click on| Type text .* in) '([^ ]+)' element/
 
 module UICov
@@ -25,13 +25,13 @@ module UICov
     ^
 
     def do_job(args)
-      usage "Missed log file", USAGE_INFO if args.empty?
+      usage 'Missed log file', USAGE_INFO if args.empty?
       @cd = CovData.new
       log_files = process_args args
       parse_logs log_files
       @cd.set_processing_date
       @cd.type = CoverageDataType::COVERAGE
-      pp @cd
+      @cd.save
     end
 
     private

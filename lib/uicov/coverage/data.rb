@@ -4,12 +4,18 @@
 
 module UICov
   class CovData
+    attr_reader :screens
     attr_accessor :type
 
-    def initialize
+    def self.load(filename)
+      YAML.load_file(filename)
+    end
+
+    def initialize(cov_file=nil)
       @type = CoverageDataType::UNKNOWN
       @log_files = {}
       @screens = {}
+      load(cov_file) unless cov_file.nil?
     end
 
     def set_processing_date(date=Time.now)
@@ -24,6 +30,11 @@ module UICov
 
     def add_log_file(filename, filedate)
       @log_files[filename] = filedate
+    end
+
+    def save(filename='coverage.uicov')
+      File.open(filename, 'w+') { |f| f.write YAML.dump(self) }
+      Log.info "Result saved to '#{File.expand_path(filename)}'"
     end
   end
 end

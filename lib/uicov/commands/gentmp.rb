@@ -19,7 +19,7 @@ module UICov
     ^
 
     def do_job(args)
-      usage "Missed log file", USAGE_INFO if args.empty?
+      usage 'Missed model file', USAGE_INFO if args.empty?
       p 'done'
     end
   end

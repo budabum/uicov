@@ -3,14 +3,6 @@
 #=======
 
 module UICov
-  class ElementData
-    def initialize(name)
-      @name = name
-      @hits = 0
-    end
-
-    def hit
-      @hits += 1
-    end
+  class ElementData < MemberData
   end
 end
