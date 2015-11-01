@@ -10,8 +10,8 @@ module UICov
       @hits = 0
     end
 
-    def hit
-      @hits += 1
+    def hit(increment=1)
+      @hits += increment
     end
   end
 end

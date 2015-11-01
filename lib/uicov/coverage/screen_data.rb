@@ -4,6 +4,7 @@
 
 module UICov
   class ScreenData
+    attr_reader :elements, :transitions, :actions, :checks
     def initialize(name)
       @name = name
       @hits = 0
@@ -19,22 +20,22 @@ module UICov
 
     def add_covered_transition(name, to)
       tr_key = TransitionData.get_key(name, to)
-      trd = (@transitions[tr_key] ||= TransitionData.new name, to)
+      trd = (transitions[tr_key] ||= TransitionData.new name, to)
       trd.hit
     end
 
     def add_covered_action(name)
-      ad = (@actions[name] ||= ActionData.new name)
+      ad = (actions[name] ||= ActionData.new name)
       ad.hit
     end
 
     def add_covered_check(name)
-      ad = (@checks[name] ||= CheckData.new name)
+      ad = (checks[name] ||= CheckData.new name)
       ad.hit
     end
 
     def add_covered_element(name)
-      ad = (@elements[name] ||= ElementData.new name)
+      ad = (elements[name] ||= ElementData.new name)
       ad.hit
     end
 
@@ -51,15 +52,15 @@ CAPTION{text-align: left; font-weight: bold}
 </style>
 <h2>Screen: <span>#{@name}</span></h2>
 <h3>Coverage summary</h3>
-#{report_members_summary 'elements' unless @elements.empty?}
-#{report_members_summary 'transitions' unless @transitions.empty?}
-#{report_members_summary 'actions' unless @actions.empty?}
-#{report_members_summary 'checks' unless @checks.empty?}
+#{report_members_summary 'elements' unless elements.empty?}
+#{report_members_summary 'transitions' unless transitions.empty?}
+#{report_members_summary 'actions' unless actions.empty?}
+#{report_members_summary 'checks' unless checks.empty?}
 <h3>Coverage details</h3>
-#{report_members 'elements' unless @elements.empty?}
-#{report_members 'transitions' unless @transitions.empty?}
-#{report_members 'actions' unless @actions.empty?}
-#{report_members 'checks' unless @checks.empty?}
+#{report_members 'elements' unless elements.empty?}
+#{report_members 'transitions' unless transitions.empty?}
+#{report_members 'actions' unless actions.empty?}
+#{report_members 'checks' unless checks.empty?}
 <hr/>
       ^
     end
@@ -89,7 +90,8 @@ CAPTION{text-align: left; font-weight: bold}
     def get_coverage(members_name)
       members = instance_variable_get("@#{members_name}")
       uncovered = members.values.select{|e| e.hits == 0}
-      return (members.size - uncovered.size) / members.size * 100
+      cov = ((members.size.to_f - uncovered.size) / members.size) * 100
+      return cov.round(2)
     end
   end
 end
