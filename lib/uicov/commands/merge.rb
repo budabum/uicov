@@ -23,13 +23,6 @@ module UICov
       @merged.save('merged.uicov')
     end
 
-    private
-    def process_args(args)
-      # TODO: process --switches
-      # Now only cov files are supported as arguments
-      return args
-    end
-
     def merge(cov_files)
       Log.warn 'Only one file is given. Nothing to merge.' if cov_files.size == 1
       @merged = CovData.load cov_files[0]
@@ -45,6 +38,13 @@ module UICov
         end
       end
       return @merged
+    end
+
+    private
+    def process_args(args)
+      # TODO: process --switches
+      # Now only cov files are supported as arguments
+      return args
     end
 
     def merge_screen_data(msd, sd)

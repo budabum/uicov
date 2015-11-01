@@ -5,12 +5,12 @@
 module UICov
   class Report < Command
     OPTIONS = {
-      '--report-dir=DIR' => 'Folder to store report files [default is "uicov.report"]',
-      '--format=FORMAT ' => 'Report format. One of: html, puml [default is "html"]',
-      '--no-transitions' => 'Do not report transitions coverage',
-      '--no-actions    ' => 'Do not report actions coverage',
-      '--no-checks     ' => 'Do not report checks coverage',
-      '--no-elements   ' => 'Do not report elements coverage'
+      '--report-file=DIR' => 'Folder to store report files [default is "uicov.report.html"]',
+      '--format=FORMAT  ' => 'Report format. One of: html, puml [default is "html"]',
+      '--no-transitions ' => 'Do not report transitions coverage',
+      '--no-actions     ' => 'Do not report actions coverage',
+      '--no-checks      ' => 'Do not report checks coverage',
+      '--no-elements    ' => 'Do not report elements coverage'
     }
     USAGE_INFO = %Q^[options] file1.uicov [file2.uicov ... fileN.uicov]
       \n\rWhere options are:
@@ -20,9 +20,9 @@ module UICov
     def do_job(args)
       usage 'Missed coverage file', USAGE_INFO if args.empty?
       cov_files = process_args args
-      @cd = CovData.load merge_files(cov_files)
-      create_per_screen_report
-      create_summary_report
+      @cd = merged_file(cov_files)
+      @html = create_per_screen_report
+      @html << create_summary_report
       save
     end
 
@@ -33,21 +33,22 @@ module UICov
       return args
     end
 
-    def merge_files(cov_files)
-      # TODO: call merge
-      cov_files[0]
+    def merged_file(cov_files)
+      cov_files.size > 1 ? Merge.new.merge(cov_files) : CovData.load(cov_files.first)
     end
 
     def create_per_screen_report
-      @cd.screens.values.each { |s| puts s.report }
+      @cd.screens.values.map{ |s| s.report }.join("\n")
     end
 
     def create_summary_report
-
+      ''
     end
 
-    def save
-
+    def save(filename='uicov.report.html')
+      report_file = File.expand_path filename
+      File.open(report_file, 'w'){|f| f.write(@html)}
+      Log.info "Result saved into file #{report_file}"
     end
   end
 end

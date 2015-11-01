@@ -33,7 +33,7 @@ module UICov
     end
 
     def save(filename='coverage.uicov')
-      File.open(filename, 'w+') { |f| f.write YAML.dump(self) }
+      File.open(filename, 'w') { |f| f.write YAML.dump(self) }
       Log.info "Result saved to '#{File.expand_path(filename)}'"
     end
   end
