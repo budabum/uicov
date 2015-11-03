@@ -1,0 +1,14 @@
+[2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Set FirstScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Click on 'Button1' element
+[2015-08-27T13:31:27] DEBUG: Transition first_to_third from SecondScreen to ThirdScreen
+[2015-08-27T13:31:27] DEBUG: Set ThirdScreen as current screen
+[2015-08-27T13:31:27] DEBUG: Type test 'Welcome folks!' in 'WelcomeField' element
+[2015-08-27T13:31:27] DEBUG: Click on 'Button1' element
+[2015-08-27T13:31:27] DEBUG: Action 'welcome' is done on screen SecondScreen
+[2015-08-27T13:31:27] DEBUG: Check 'welcome_message' is 'Welcome folks!'
+[2015-08-27T13:31:27] DEBUG: Some useless message
+[2015-08-27T13:31:27] DEBUG: Transition third_to_fifth from ThirdScreen to FifthScreen
+[2015-08-27T13:31:27] DEBUG: Set FifthScreen as current screen
+
