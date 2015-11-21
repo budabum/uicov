@@ -3,6 +3,14 @@
 #=======
 
 module UICov
+  def self.patterns_override(target, &blk)
+    case target
+      when :model
+      else
+        Log.fatal "Unknown target #{target} in pattern file #{__FILE__}"
+    end
+  end
+
   class Main
     COMMANDS = {
       gentpl: 'Generate coverage template file',

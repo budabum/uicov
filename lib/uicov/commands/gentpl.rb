@@ -19,35 +19,44 @@ module UICov
   class Gentpl < Command
     DEFAULT_FILENAME = 'template.uic'
     OPTIONS = {
-      '--template-file=FILE' => "File to store coverage template [default is '#{DEFAULT_FILENAME}']'",
-      '--puml=DIR      ' => 'Folder where Plant UML model files are',
-      '--no-transitions' => 'Do not include transitions templates',
-      '--no-actions    ' => 'Do not include actions templates',
-      '--no-checks     ' => 'Do not include checks templates',
-      '--no-elements   ' => 'Do not include elements templates'
+      '--template-file=FILE' => "File to store coverage template [default is '#{DEFAULT_FILENAME}']",
+      # '--puml=DIR      ' => 'Folder where Plant UML model files are',
+      # '--no-transitions' => 'Do not include transitions templates',
+      # '--no-actions    ' => 'Do not include actions templates',
+      # '--no-checks     ' => 'Do not include checks templates',
+      # '--no-elements   ' => 'Do not include elements templates'
     }
     USAGE_INFO = %Q^[options] model-file1.puml [model-file2.puml ... model-fileN.puml]
-      or
-      \r\t#{COMMAND_PREFIX} [options] --puml=DIR      \n\n\rWhere options are:
+      \n\rWhere options are:
       #{OPTIONS.inject([]){|a, e| a << "\r\t#{e[0]}\t- #{e[1]}"; a}.join("\n")}
     ^
+    #   or
+    #   \r\t#{COMMAND_PREFIX} [options] --puml=DIR
+
+    def initialize
+      @template_file = DEFAULT_FILENAME
+    end
 
     def do_job(args)
-      usage 'Missed model file', USAGE_INFO if args.empty?
       @cd = CovData.new
       model_files = process_args args
+      usage 'Missed model file', USAGE_INFO if model_files.empty?
       parse_models model_files
       @cd.set_processing_date
       @cd.type = CoverageDataType::TEMPLATE
-      pp @cd
-      @cd.save(DEFAULT_FILENAME)
+      @cd.save(@template_file)
     end
 
     private
 
     def process_args(args)
-      # TODO: process --switches
-      # Now only log files are supported as arguments
+      template_file_option = args.grep(/--template-file=.*/)[0]
+      if template_file_option
+        @template_file = File.expand_path template_file_option.gsub(/.*=(.+)/, '\1')
+        # Log.fatal "File #{template_file} does not exist" unless File.exist? template_file
+        # load template_file
+        args.delete_if { |e| e == template_file_option }
+      end
       return args
     end
 
