@@ -33,9 +33,9 @@ module UICov
         #{COMMANDS.inject([]){|a, e| a << "\r\t#{e[0]}\t- #{e[1]}"; a}.join("\n")}
         
         \rTo see command usage run:
-        \r\t#{$0} command help\n
+        \r\t#{$0} command\n
         \rFor instance:
-        \r\t#{$0} gather help\n
+        \r\t#{$0} gather\n
       ^
       Log.fatal msg
     end

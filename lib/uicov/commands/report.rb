@@ -12,7 +12,7 @@ module UICov
       '--no-checks      ' => 'Do not report checks coverage',
       '--no-elements    ' => 'Do not report elements coverage'
     }
-    USAGE_INFO = %Q^[options] file1.uicov [file2.uicov ... fileN.uicov]
+    USAGE_INFO = %Q^[options] file1.uic [file2.uic ... fileN.uic]
       \n\rWhere options are:
       #{OPTIONS.inject([]){|a, e| a << "\r\t#{e[0]}\t- #{e[1]}"; a}.join("\n")}
     ^

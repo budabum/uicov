@@ -4,14 +4,15 @@
 
 module UICov
   class Merge < Command
+    DEFAULT_FILENAME = 'merged.uic'
     OPTIONS = {
-      '--merged-file=FILE' => 'File to store merged coverage [default is "merged.uicov"]',
+      '--merged-file=FILE' => "File to store merged coverage [default is '#{DEFAULT_FILENAME}']",
       '--no-transitions' => 'Do not merge transitions coverage',
       '--no-actions    ' => 'Do not merge actions coverage',
       '--no-checks     ' => 'Do not merge checks coverage',
       '--no-elements   ' => 'Do not merge elements coverage'
     }
-    USAGE_INFO = %Q^[options] template.uicov file1.uicov [file2.uicov ... fileN.uicov]
+    USAGE_INFO = %Q^[options] template.uic file1.uic [file2.uic ... fileN.uic]
       \n\rWhere options are:
       #{OPTIONS.inject([]){|a, e| a << "\r\t#{e[0]}\t- #{e[1]}"; a}.join("\n")}
     ^
@@ -20,7 +21,7 @@ module UICov
       usage 'Missed coverage file', USAGE_INFO if args.empty?
       cov_files = process_args args
       merge(cov_files)
-      @merged.save('merged.uicov')
+      @merged.save(DEFAULT_FILENAME)
     end
 
     def merge(cov_files)

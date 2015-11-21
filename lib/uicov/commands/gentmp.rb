@@ -4,8 +4,9 @@
 
 module UICov
   class Gentmp < Command
+    DEFAULT_FILENAME = 'template.uicov'
     OPTIONS = {
-      '--template-file=FILE' => 'File to store coverage template [default is "template.uicov"]',
+      '--template-file=FILE' => "File to store coverage template [default is '#{DEFAULT_FILENAME}']'",
       '--puml=DIR      ' => 'Folder where Plant UML model files are',
       '--no-transitions' => 'Do not include transitions templates',
       '--no-actions    ' => 'Do not include actions templates',

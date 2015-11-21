@@ -11,8 +11,9 @@ $element = /(?:Click on| Type text .* in) '([^ ]+)' element/
 
 module UICov
   class Gather < Command
+    DEFUALT_FILENAME = 'coverage.uic'
     OPTIONS = {
-      '--coverage-file=FILE' => 'File to store coverage info [default is "coverage.uicov"]',
+      '--coverage-file=FILE' => "File to store coverage info [default is '#{DEFUALT_FILENAME}']",
       '--pattern-file=FILE' => 'Path to pattern file to override default patterns',
       '--no-transitions' => 'Do not gather transitions coverage',
       '--no-actions    ' => 'Do not gather actions coverage',
