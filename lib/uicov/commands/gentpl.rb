@@ -53,8 +53,6 @@ module UICov
       template_file_option = args.grep(/--template-file=.*/)[0]
       if template_file_option
         @template_file = File.expand_path template_file_option.gsub(/.*=(.+)/, '\1')
-        # Log.fatal "File #{template_file} does not exist" unless File.exist? template_file
-        # load template_file
         args.delete_if { |e| e == template_file_option }
       end
       return args

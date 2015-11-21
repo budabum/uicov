@@ -36,7 +36,7 @@ module UICov
       @input_files[filename] = filedate
     end
 
-    def save(filename=Gather::DEFUALT_FILENAME)
+    def save(filename)
       File.open(filename, 'w') { |f| f.write YAML.dump(self) }
       Log.info "Result saved to '#{File.expand_path(filename)}'"
     end

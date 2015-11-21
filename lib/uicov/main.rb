@@ -5,9 +5,10 @@
 module UICov
   def self.patterns_override(target, &blk)
     case target
-      when :model
+      when :log
+        LogPatterns.class_exec &blk
       else
-        Log.fatal "Unknown target #{target} in pattern file #{__FILE__}"
+        Log.fatal "Unknown target '#{target}' in pattern file '#{caller[0]}'"
     end
   end
 

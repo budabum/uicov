@@ -40,7 +40,7 @@ module UICov
     end
 
     def add_covered_check(name)
-      add_check.hit
+      add_check(name).hit
     end
 
     def add_element(name)
@@ -48,7 +48,7 @@ module UICov
     end
 
     def add_covered_element(name)
-      add_element.hit
+      add_element(name).hit
     end
 
     def report
