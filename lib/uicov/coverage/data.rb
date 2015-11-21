@@ -4,7 +4,7 @@
 
 module UICov
   class CovData
-    attr_reader :screens
+    attr_reader :screens, :input_files
     attr_accessor :type
 
     def self.load(filename)

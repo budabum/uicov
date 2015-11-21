@@ -7,21 +7,25 @@ module UICov
     DEFAULT_FILENAME = 'merged.uic'
     OPTIONS = {
       '--merged-file=FILE' => "File to store merged coverage [default is '#{DEFAULT_FILENAME}']",
-      '--no-transitions' => 'Do not merge transitions coverage',
-      '--no-actions    ' => 'Do not merge actions coverage',
-      '--no-checks     ' => 'Do not merge checks coverage',
-      '--no-elements   ' => 'Do not merge elements coverage'
+      # '--no-transitions' => 'Do not merge transitions coverage',
+      # '--no-actions    ' => 'Do not merge actions coverage',
+      # '--no-checks     ' => 'Do not merge checks coverage',
+      # '--no-elements   ' => 'Do not merge elements coverage'
     }
     USAGE_INFO = %Q^[options] template.uic file1.uic [file2.uic ... fileN.uic]
       \n\rWhere options are:
       #{OPTIONS.inject([]){|a, e| a << "\r\t#{e[0]}\t- #{e[1]}"; a}.join("\n")}
     ^
 
+    def initialize
+      @merged_file = DEFAULT_FILENAME
+    end
+
     def do_job(args)
       usage 'Missed coverage file', USAGE_INFO if args.empty?
       cov_files = process_args args
       merge(cov_files)
-      @merged.save(DEFAULT_FILENAME)
+      @merged.save(@merged_file)
     end
 
     def merge(cov_files)
@@ -37,14 +41,18 @@ module UICov
             merge_screen_data msd, screen_data
           end
         end
+        @merged.input_files.merge! @cd.input_files
       end
       return @merged
     end
 
     private
     def process_args(args)
-      # TODO: process --switches
-      # Now only cov files are supported as arguments
+      merged_file_option = args.grep(/--merged-file=.*/)[0]
+      if merged_file_option
+        @merged_file = File.expand_path merged_file_option.gsub(/.*=(.+)/, '\1')
+        args.delete_if { |e| e == merged_file_option }
+      end
       return args
     end
 
