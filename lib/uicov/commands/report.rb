@@ -4,18 +4,23 @@
 
 module UICov
   class Report < Command
+    DEFAULT_FILENAME = 'uicov.report.html'
     OPTIONS = {
-      '--report-file=DIR' => 'Folder to store report files [default is "uicov.report.html"]',
-      '--format=FORMAT  ' => 'Report format. One of: html, puml [default is "html"]',
-      '--no-transitions ' => 'Do not report transitions coverage',
-      '--no-actions     ' => 'Do not report actions coverage',
-      '--no-checks      ' => 'Do not report checks coverage',
-      '--no-elements    ' => 'Do not report elements coverage'
+      '--report-file=FILE' => "File to store report [default is '#{DEFAULT_FILENAME}']",
+      # '--format=FORMAT  ' => 'Report format. One of: html, puml [default is "html"]',
+      # '--no-transitions ' => 'Do not report transitions coverage',
+      # '--no-actions     ' => 'Do not report actions coverage',
+      # '--no-checks      ' => 'Do not report checks coverage',
+      # '--no-elements    ' => 'Do not report elements coverage'
     }
     USAGE_INFO = %Q^[options] file1.uic [file2.uic ... fileN.uic]
       \n\rWhere options are:
       #{OPTIONS.inject([]){|a, e| a << "\r\t#{e[0]}\t- #{e[1]}"; a}.join("\n")}
     ^
+
+    def initialize
+      @report_file = DEFAULT_FILENAME
+    end
 
     def do_job(args)
       usage 'Missed coverage file', USAGE_INFO if args.empty?
@@ -23,13 +28,16 @@ module UICov
       @cd = merged_file(cov_files)
       @html = create_per_screen_report
       @html << create_summary_report
-      save
+      save @report_file
     end
 
     private
     def process_args(args)
-      # TODO: process --switches
-      # Now only cov files are supported as arguments
+      report_file_option = args.grep(/--report-file=.*/)[0]
+      if report_file_option
+        @report_file = File.expand_path report_file_option.gsub(/.*=(.+)/, '\1')
+        args.delete_if { |e| e == report_file_option }
+      end
       return args
     end
 
@@ -45,7 +53,7 @@ module UICov
       ''
     end
 
-    def save(filename='uicov.report.html')
+    def save(filename)
       report_file = File.expand_path filename
       File.open(report_file, 'w'){|f| f.write(@html)}
       Log.info "Result saved into file #{report_file}"
