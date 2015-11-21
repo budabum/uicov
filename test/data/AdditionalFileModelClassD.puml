@@ -1,0 +1,21 @@
+@startuml
+
+class FirstScreen{
+    Element restore_password
+
+    Check restore_password()
+}
+
+class FifthScreen{
+    Element username
+    Element password
+    Element login_btn
+
+    Transition go_to_ans(AnotherScreen)
+
+    Action login()
+
+    Check error_shown()
+}
+
+@enduml

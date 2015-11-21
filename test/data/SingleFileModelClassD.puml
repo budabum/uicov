@@ -1,0 +1,50 @@
+@startuml
+
+class FirstScreen{
+    Element username
+    Element password
+    Element login_btn
+
+    Transition go_to_ans(AnotherScreen)
+
+    Action login()
+
+    Check error_shown()
+}
+
+class SecondScreen{
+    Element username
+    Element password
+    Element login_btn
+
+    Transition go_to_ans(AnotherScreen)
+
+    Action login()
+
+    Check error_shown()
+}
+
+class ThirdScreen{
+    Element username
+    Element password
+    Element login_btn
+
+    Transition go_to_ans(AnotherScreen)
+
+    Action login()
+
+    Check error_shown()
+}
+
+class ForthScreen{
+    Element username
+    Element password
+    Element login_btn
+
+    Transition go_to_ans(AnotherScreen)
+
+    Action login()
+
+    Check error_shown()
+}
+@enduml

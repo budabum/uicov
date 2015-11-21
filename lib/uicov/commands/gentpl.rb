@@ -39,6 +39,7 @@ module UICov
       parse_models model_files
       @cd.set_processing_date
       @cd.type = CoverageDataType::TEMPLATE
+      pp @cd
       @cd.save(DEFAULT_FILENAME)
     end
 
@@ -90,18 +91,21 @@ module UICov
                             ^
                 end
                 cur_screen_data.add_action name
-              # when $check
-              #   name, screen = $~[1..2]
-              #   unless current_screen == screen
-              #     Log.error %Q^
-              #       Check #{name} is add_log_filedone on screen #{screen} but current screen is #{current_screen}
-              #       Found in log #{model_file} at line #{f.lineno}
-              #               ^
-              #   end
-              #   cur_screen_data.add_covered_check name
-              # when $element
-              #   name = $~[1]
-              #   cur_screen_data.add_covered_element name
+
+              when ModelPatterns.check
+                name = $~[1]
+                if current_screen.nil?
+                  Log.error %Q^
+                    Wrong model: Action #{name} is done on unknown screen.
+                    Found in model #{model_file} at line #{f.lineno}
+                            ^
+                end
+                cur_screen_data.add_check name
+
+              when ModelPatterns.element
+                name = $~[1]
+                cur_screen_data.add_element name
+
               else
                 #d line
             end

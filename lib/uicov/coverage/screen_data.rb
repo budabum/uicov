@@ -35,14 +35,20 @@ module UICov
       add_action(name).hit
     end
 
+    def add_check(name)
+      checks[name] ||= CheckData.new name
+    end
+
     def add_covered_check(name)
-      ad = (checks[name] ||= CheckData.new name)
-      ad.hit
+      add_check.hit
+    end
+
+    def add_element(name)
+      elements[name] ||= ElementData.new name
     end
 
     def add_covered_element(name)
-      ad = (elements[name] ||= ElementData.new name)
-      ad.hit
+      add_element.hit
     end
 
     def report
