@@ -26,8 +26,11 @@ module UICov
       usage 'Missed coverage file', USAGE_INFO if args.empty?
       cov_files = process_args args
       @cd = merged_file(cov_files)
-      @html = create_per_screen_report
+      @html = ''
+      @html << add_header
       @html << create_summary_report
+      @html << create_screens_summary_report
+      @html << create_per_screen_report
       save @report_file
     end
 
@@ -45,12 +48,63 @@ module UICov
       cov_files.size > 1 ? Merge.new.merge(cov_files) : CovData.load(cov_files.first)
     end
 
-    def create_per_screen_report
-      @cd.screens.values.map{ |s| s.report }.join("\n")
+    def add_header
+      %Q^
+<style>
+.covtable{
+  border: thin solid black;
+  text-align: left;
+}
+BODY,TABLE {font-size: small}
+H2{text-align:center;}
+TH,TD{border:thin solid black}
+CAPTION{text-align: left; font-weight: bold}
+</style>
+      ^
     end
 
     def create_summary_report
-      ''
+      %Q^
+        <h1>Summary Report</h1>
+      ^
+    end
+
+    def create_screens_summary_report
+      # tr_line1 = "<tr><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+      tr_line2 = "<tr>
+        <td><b>%s</b></td>
+        <td>%s</td><td>%s</td><td>%s</td>
+        <td>%s</td><td>%s</td><td>%s</td>
+        <td>%s</td><td>%s</td><td>%s</td>
+        <td>%s</td><td>%s</td><td>%s</td>
+      </tr>"
+      str_res = %Q^
+        <h1>Screens Summary Report</h1>
+        <table width='80%'>
+        <tr><th rowspan='2'>Screen</th><th colspan='3'>Elements</th><th colspan='3'>Transitions</th><th colspan='3'>Actions</th><th colspan='3'>Checks</th></tr>
+        <tr><th>Hitted</th><th>All</th><th>%</th><th>Hitted</th><th>All</th><th>%</th><th>Hitted</th><th>All</th><th>%</th><th>Hitted</th><th>All</th><th>%</th></tr>
+      ^
+      total = @cd.screens.inject([0,0,0, 0,0,0, 0,0,0, 0,0,0]) do |arr, pair|
+        name, screen = pair
+        ec = [screen.get_count(:elements, true), screen.get_count(:elements), screen.get_coverage(:elements)]
+        tc = [screen.get_count(:transitions, true), screen.get_count(:transitions), screen.get_coverage(:transitions)]
+        ac = [screen.get_count(:actions, true), screen.get_count(:actions), screen.get_coverage(:actions)]
+        cc = [screen.get_count(:checks, true), screen.get_count(:checks), screen.get_coverage(:checks)]
+        str_res << tr_line2 % [name, *ec, *tc, *ac, *cc]
+        arr
+      end
+      str_res << %Q^
+        #{tr_line2 % ['Total', *total]}
+        </table>
+      ^
+    end
+    #{@cd.screens.keys.map{|k| "#{tr_line % [k,'','','','']}".join("\n")}
+
+    def create_per_screen_report
+      %Q^
+        <h1>Detailed Report</h1>
+        #{@cd.screens.values.map{ |s| s.report }.join("\n")}
+      ^
     end
 
     def save(filename)

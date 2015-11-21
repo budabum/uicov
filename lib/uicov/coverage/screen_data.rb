@@ -53,15 +53,6 @@ module UICov
 
     def report
       %Q^
-<style>
-.covtable{
-  border: thin solid black;
-  text-align: left;
-}
-H2{text-align:center;}
-TH,TD{border:thin solid black}
-CAPTION{text-align: left; font-weight: bold}
-</style>
 <h2>Screen: <span>#{@name}</span></h2>
 <h3>Coverage summary</h3>
 #{report_members_summary 'elements' unless elements.empty?}
@@ -75,6 +66,22 @@ CAPTION{text-align: left; font-weight: bold}
 #{report_members 'checks' unless checks.empty?}
 <hr/>
       ^
+    end
+
+    def get_coverage(members_name)
+      members = instance_variable_get("@#{members_name}")
+      uncovered = members.values.select{|e| e.hits == 0}
+      cov = ((members.size.to_f - uncovered.size) / members.size) * 100
+      return cov.nan? ? 100.0 : cov.round(2)
+    end
+
+    def get_count(members_name, hitted=false)
+      members = instance_variable_get("@#{members_name}")
+      if hitted
+        members.values.keep_if{ |e| 0 < e.hits}.size
+      else
+        members.size
+      end
     end
 
     private
@@ -97,13 +104,6 @@ CAPTION{text-align: left; font-weight: bold}
       %Q^
 <div>#{members_name.capitalize}: #{coverage}%</div>
       ^
-    end
-
-    def get_coverage(members_name)
-      members = instance_variable_get("@#{members_name}")
-      uncovered = members.values.select{|e| e.hits == 0}
-      cov = ((members.size.to_f - uncovered.size) / members.size) * 100
-      return cov.round(2)
     end
   end
 end
