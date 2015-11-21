@@ -18,15 +18,21 @@ module UICov
       @hits += 1
     end
 
-    def add_covered_transition(name, to)
+    def add_transition(name, to)
       tr_key = TransitionData.get_key(name, to)
-      trd = (transitions[tr_key] ||= TransitionData.new name, to)
-      trd.hit
+      transitions[tr_key] ||= TransitionData.new name, to
+    end
+
+    def add_covered_transition(name, to)
+      add_transition(name, to).hit
+    end
+
+    def add_action(name)
+      actions[name] ||= ActionData.new name
     end
 
     def add_covered_action(name)
-      ad = (actions[name] ||= ActionData.new name)
-      ad.hit
+      add_action(name).hit
     end
 
     def add_covered_check(name)

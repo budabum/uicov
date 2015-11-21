@@ -5,10 +5,10 @@
 module UICov
   class Main
     COMMANDS = {
+      gentpl: 'Generate coverage template file',
       gather: 'Gather coverage information from log file',
-      gentmp: 'Generate coverage template file',
+      report: 'Generate coverage report',
       merge: 'Merge coverage files',
-      report: 'Generate coverage report'
     }
 
     COMMANDS.keys.each { |k| require_relative "commands/#{k}" }

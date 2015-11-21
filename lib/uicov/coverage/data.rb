@@ -13,7 +13,7 @@ module UICov
 
     def initialize(cov_file=nil)
       @type = CoverageDataType::UNKNOWN
-      @log_files = {}
+      @input_files = {}
       @screens = {}
       load(cov_file) unless cov_file.nil?
     end
@@ -22,14 +22,18 @@ module UICov
       @data_gathered_at = date.strftime('%F %R:%S.%3N')
     end
 
+    def add_screen(name)
+      @screens[name] ||= ScreenData.new name
+    end
+
     def add_covered_screen(name)
-      scd = (@screens[name] ||= ScreenData.new name)
+      scd = add_screen name
       scd.hit
       return scd
     end
 
-    def add_log_file(filename, filedate)
-      @log_files[filename] = filedate
+    def add_input_file(filename, filedate)
+      @input_files[filename] = filedate
     end
 
     def save(filename=Gather::DEFUALT_FILENAME)

@@ -101,7 +101,7 @@ module UICov
           # it's ok
         end
       end
-      @cd.add_log_file log_file, File.mtime(log_file).strftime('%F %R:%S.%3N')
+      @cd.add_input_file log_file, File.mtime(log_file).strftime('%F %R:%S.%3N')
     end
   end
 end
