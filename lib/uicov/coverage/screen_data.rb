@@ -88,11 +88,11 @@ module UICov
     def report_members(members_name)
       members = instance_variable_get("@#{members_name}")
       %Q^
-<table class='covtable'>
+<table class='covtable' width='25%'>
 <thead><caption>#{members_name.capitalize}:</caption></thead>
 <tbody>
 <tr><th>Name</th><th>Hits</th></tr>
-#{members.values.map{|e| "<tr><td>#{e.display_name}</td><td>#{e.hits}</td></tr>"}.join("\n") }
+#{members.values.map{|e| "<tr><td class='namecol'>#{e.display_name}</td><td>#{e.hits}</td></tr>"}.join("\n") }
 </tbody>
 </table>
 <br/>

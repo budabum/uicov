@@ -57,7 +57,9 @@ module UICov
 }
 BODY,TABLE {font-size: small}
 H2{text-align:center;}
-TH,TD{border:thin solid black}
+TH{border:thin solid black;text-align:center; background-color: #CCCCCC}
+TD{border:thin solid black;text-align:right}
+TD.namecol{border:thin solid black;text-align:left}
 CAPTION{text-align: left; font-weight: bold}
 </style>
       ^
@@ -72,7 +74,7 @@ CAPTION{text-align: left; font-weight: bold}
     def create_screens_summary_report
       # tr_line1 = "<tr><td><b>%s</b></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
       tr_line2 = "<tr>
-        <td><b>%s</b></td>
+        <td class='namecol'><b>%s</b></td>
         <td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td>
         <td>%s</td><td>%s</td><td>%s</td>
@@ -82,7 +84,7 @@ CAPTION{text-align: left; font-weight: bold}
         <h1>Screens Summary Report</h1>
         <table width='80%'>
         <tr><th rowspan='2'>Screen</th><th colspan='3'>Elements</th><th colspan='3'>Transitions</th><th colspan='3'>Actions</th><th colspan='3'>Checks</th></tr>
-        <tr><th>Hitted</th><th>All</th><th>%</th><th>Hitted</th><th>All</th><th>%</th><th>Hitted</th><th>All</th><th>%</th><th>Hitted</th><th>All</th><th>%</th></tr>
+        <tr><th>Hit</th><th>All</th><th>%</th><th>Hit</th><th>All</th><th>%</th><th>Hit</th><th>All</th><th>%</th><th>Hit</th><th>All</th><th>%</th></tr>
       ^
       total = @cd.screens.inject([0,0,0, 0,0,0, 0,0,0, 0,0,0]) do |arr, pair|
         name, screen = pair
