@@ -22,7 +22,7 @@ gem install uicov
 
 ## Usage
 
-1.  Create template from model
+### Create template from model
 
 ```
 uicov gentpl $model-file1 $model-file2 ... 
@@ -31,7 +31,7 @@ uicov gentpl $model-file1 $model-file2 ...
 Generally speaking the model files and template are optional. However if you want to inspect coverage holes and see the 
 whole picture you will have to create a model and template.
 
-2. Gather coverage
+### Gather coverage
 
 ```
 uicov gather $log-file1 $log-file2 ...
@@ -39,13 +39,35 @@ uicov gather $log-file1 $log-file2 ...
 
 The ```gather``` command will parse your log files and create coverage file.
 
-3. enerate coverage report
+### Generate coverage report
 
 ```
 uicov report $template $coverage-file1 $coverage-file2 ...
 ```
 
 The ```report``` command will generate html-report for coverage.
+
+## More usage examples
+
+### Adapting to your log file format
+
+To adjust tool to your log file format use option ```--pattern-file=$filename``` of ```gather``` command.
+
+```
+UICov::patterns_override :log do
+	set_current_screen /([^ ]+) is set as current screen/
+
+	set_transition /Transition '([^ ]+)' of kind '[^']+' from '([^ ]+)' is done to '([^ ]+)'/
+
+	set_action /Your pattern here/
+
+	set_check /Your pattern here/
+
+	set_element /Your pattern here/
+end
+```
+
+Example: https://github.com/budabum/uicov/blob/master/test/data/patt1.rb
 
 ## License
 
