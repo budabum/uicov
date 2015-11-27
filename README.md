@@ -1,40 +1,51 @@
 # Uicov
 UICov is a tool to calculate coverage of automated tests made with Selenium WebDriver, Calabash, Appium or other tools.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/uicov`. To experiment with that code, run `bin/console` for an interactive prompt.
+UICov is written on Ruby and tested with ruby (MRI) versions 1.9.3, 2.0.0, 2.1.5 and 2.2.1
 
-TODO: Delete this and the text above, and describe your gem
+The tool does NOT require you to write tests on ruby. It parses test's logs. Therefore your tests might be written on
+any programming language. What is needed is comprehensive log files and optionally model files.
+
+The following UI entities are covered:
+
+- Screens.
+- Transitions (actions that change current screen).
+- Actions ('business' actions made on the screen).
+- Elements (web elements accessed by tests).
+- Checks (different kinds of assertions made on the screen).   
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'uicov'
 ```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install uicov
+gem install uicov
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+1.  Create template from model
 
-## Development
+```
+uicov gentpl $model-file1 $model-file2 ... 
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Generally speaking the model files and template are optional. However if you want to inspect coverage holes and see the 
+whole picture you will have to create a model and template.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+2. Gather coverage
 
-## Contributing
+```
+uicov gather $log-file1 $log-file2 ...
+```
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/uicov.
+The ```gather``` command will parse your log files and create coverage file.
 
+3. enerate coverage report
+
+```
+uicov report $template $coverage-file1 $coverage-file2 ...
+```
+
+The ```report``` command will generate html-report for coverage.
 
 ## License
 
