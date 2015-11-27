@@ -52,12 +52,17 @@ The ```report``` command will generate html-report for coverage.
 ### Adapting to your log file format
 
 To adjust tool to your log file format use option ```--pattern-file=$filename``` of ```gather``` command.
+```
+uicov gather -pattern-file=$filename $log-file1 $log-file2 ...
+```
+
+The format of file is:
 
 ```
 UICov::patterns_override :log do
-	set_current_screen /([^ ]+) is set as current screen/
+	set_current_screen /Your pattern here/
 
-	set_transition /Transition '([^ ]+)' of kind '[^']+' from '([^ ]+)' is done to '([^ ]+)'/
+	set_transition /Your pattern here/
 
 	set_action /Your pattern here/
 
